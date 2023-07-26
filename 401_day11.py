@@ -5,7 +5,7 @@
 # Utilize the scapy library
     # If scapy not installed, first run "pip3 install scapy"
 import sys
-from scapy import sr1, ICMP, IP, TCP, haslayer, getlayer, rst
+from scapy.all import sr1, ICMP, IP, TCP
 
 # Define host IP
 host = "scanme.nmap.org"
@@ -25,13 +25,13 @@ response= sr1(IP(dst=host)/TCP(sport=scr_port,dport=dst_port, flags="S"),timeout
 
     # If flag 0x12 received, send a RST packet to graciously close the open connection. Notify the user the port is open.
 for flags in response: 
-    if (haslayer(TCP)):
-        if (getlayer(TCP).flags == 0x12):
+    if (response.haslayer(TCP)):
+        if (response.getlayer(TCP).flags == 0x12):
             send_rst = sr1(IP(dst=host)/TCP(sport=scr_port,dport=dst_port, flags="R"),timeout=1, verbose=0)
             print(f"{host}:{dst_port} is open")
 
     # If flag 0x14 received, notify user the port is closed.cd
-        elif (getlayer(TCP).flags == 0x14):
+        elif (response.getlayer(TCP).flags == 0x14):
             print(f"{host}:{dst_port} is closed")
     # If no flag is received, notify the user the port is filtered and silently dropped.
         else:
