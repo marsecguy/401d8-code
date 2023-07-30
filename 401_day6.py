@@ -23,34 +23,83 @@
 from cryptography.fernet import Fernet
 import os
 
-# Define functions
-
-    # Function to generate key and save it to a file: "key_file"
-def write_key():
-    key = Fernet.generate_key()
-    f = Fernet(key)
-    with open("key.key","wb") as key_file:
-        key_file.write(key)
-
-    # Function to load the key
-def use_key():
-    return open("key.key", "rb").read()
-
-
-    # Function to encrypt a file with the key
-def encrypt_file(file_path):
-    key = use_key()
-    cipher = Fernet(key)
-
-    with open(file_path, "rb") as file:
+# Declaration of functions
+# Create key
+def generate_key():
+    return Fernet.generate_key()
+# Add the key
+def load_key(key_file):
+    with open(key_file, 'rb') as file:
+        return file.read()
+# Save the key
+def save_key(key_file, key):
+    with open(key_file, 'wb') as file:
+        file.write(key)
+# Encrypt data
+def encrypt_file(key, input_file, output_file):
+    fernet = Fernet(key)
+    with open(input_file, 'rb') as file:
         data = file.read()
+    encrypted_data = fernet.encrypt(data)
+    with open(output_file, 'wb') as file:
+        file.write(encrypted_data)
+# Decrypt Data
+def decrypt_file(key, input_file, output_file):
+    fernet = Fernet(key)
+    with open(input_file, 'rb') as file:
+        data = file.read()
+    decrypted_data = fernet.decrypt(data)
+    with open(output_file, 'wb') as file:
+        file.write(decrypted_data)
+# Encrypt the message
+def encrypt_message(key, message):
+    fernet = Fernet(key)
+    encrypted_message = fernet.encrypt(message.encode())
+    print("Encrypted message:", encrypted_message.decode())
+# Decrypt the message
+def decrypt_message(key, encrypted_message):
+    fernet = Fernet(key)
+    decrypted_message = fernet.decrypt(encrypted_message.encode())
+    print("Decrypted message:", decrypted_message.decode())
 
-    encrypted_data = cipher.encrypt(data)
+# Main
+# Find if key file already exists
+def main():
+    key_file = 'encryption_key.key'
+    if not os.path.exists(key_file):
+        key = generate_key()
+        save_key(key_file, key)
+    # Create if it does not exist
+    else:
+        key = load_key(key_file)
 
-    encrypted_file_path = file_path + ".encrypted"
-    with open(encrypted_file_path, "wb") as encrypted_file:
-        encrypted_file.write(encrypted_data)
+# Display a menu
+    print("Select a mode:")
+    print("1 - Encrypt file")
+    print("2 - Decrypt file")
+    print("3 - Encrypt message")
+    print("4 - Decrypt message")
+# User inserts mode
+    mode = int(input("Enter mode number: "))
+    # Mode Selection/Call function 
+    if mode == 1:
+        encrypt_file(key, input("Enter filepath of the file to encrypt: "), input("Enter filepath to save the file: "))
+        print("File encrypted successfully.")
 
-# Function to decrypt a file
+    elif mode == 2:
+        decrypt_file(key, input("Enter filepath of the file to decrypt: "), input("Enter filepath to save the file: "))
+        print("File decrypted successfully.")
 
-# Function to encrypt a message 
+    elif mode == 3:
+        encrypt_message(key, input("Enter message to encrypt: "))
+
+    elif mode == 4:
+        decrypt_message(key, input("Enter message to decrypt: "))
+# If user enters something else display error message
+    else:
+        print("Invalid mode selection.")
+
+if __name__ == "__main__":
+    main()
+
+# END
