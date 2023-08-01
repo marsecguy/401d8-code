@@ -15,6 +15,7 @@
 
 # Import librabries
 import time
+import getpass
 
 # Define variables
 
@@ -43,21 +44,33 @@ def iterator():
     #Print to the screen whether the string appeared in the word list.
 
 def finder():
-    pswrd = input("Please enter your password: ")
-    filepath = open("rockyou.txt", 'r')
-    line = filepath.readline()
-    if line == pswrd:
+    pswrd = getpass.getpass("Please enter your password: ")
+    list = "/home/divermedic/401d8-code/401d8-code/rockyou.txt"
+    file = open(list, 'r')
+    line = file.readline()
+    wordlist = []
+
+    while line:
+        line = line.rstrip()
+        wordlist.append(line)
+        line = file.readline()
+    file.close()
+
+    if pswrd in wordlist: 
         print("Your password appeared in the list and is not secure. Please change it immediately.")
-  
-    line = filepath.readline()
-    filepath.close()
+    elif pswrd not in wordlist:
+        print("Your password is acceptable") 
 
 def main():
-    mode = input("Choose mode: 1 for Offensive or 2 for Defensive: ")
+    mode = input("Choose mode: 1 for Offensive, 2 for Defensive or 3 to exit: ")
     if mode == "1":
        iterator()
     elif mode == "2":
        finder()
+    elif mode == "3":
+        exit
+    else:
+        print("Invalid slection. Try again.")
 
 main()
 
