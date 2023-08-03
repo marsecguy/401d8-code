@@ -9,19 +9,22 @@
 
 # Mode 2: Defensive; Password Recognized
     # Accepts a user input string.
-    # Accepts a user input word list file path.
+    # Accepts a user input word list file path
+
     # Search the word list for the user input string.
     # Print to the screen whether the string appeared in the word list.
 
 # Mode 3: Authenticate to an SSH server by its IP address.
     #Assume the username and IP are known inputs and attempt each word on the provided word list until successful login takes place.
 
+# Mode 4: Tool that allows you to brute force attack a password-locked zip file.
+
 # Import librabries
 import time
 import getpass
 import paramiko
 from zipfile import ZipFile
-import zipfile
+
 # Define variables
 
 # Declare functions
@@ -104,29 +107,27 @@ def ssh_authentication():
 
     except FileNotFoundError:
         print("File not found. Please check the filepath.")
-    
+
 # Mode 4: Tool that allows you to brute force attack a password-locked zip file.
 def zip():
     zip_file = input("Please provide the path to the zip file: ")
-    #wordlist = input("Enter the filepath for the password list: ")
-    #file = open(wordlist, 'r')
-    #line = file.readline()
-    #password = []
+    wordlist = input("Enter the filepath for the password list: ")
 
-    list = input("Please enter the full path of the file: ")
-    file = open(list, 'r')
-    line = file.readline()
-    wordlist = []
+    with open(wordlist, 'r') as file:
+        for line in file:
+            password = line.strip()
 
-    while line:
-        line = line.rstrip()
-        wordlist.append(line)
-        line = file.readline()
-  
-        with ZipFile(zip_file) as zf:
-            zf.extractall(pwd=bytes(wordlist, 'utf-8'))
-        
-    file.close()
+            try:
+                with ZipFile(zip_file, 'r') as zf:
+                    zf.extractall(pwd=bytes(password, 'utf-8'))
+                print(f"Success! The password is: {password}")
+                return
+            except Exception as e:
+                # If the password is incorrect, it will raise an exception.
+                # We ignore the exception and continue with the next password.
+                pass
+
+    print("Password not found in the list.")
   
 # Main
 def main():
