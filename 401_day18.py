@@ -17,10 +17,11 @@
     #Assume the username and IP are known inputs and attempt each word on the provided word list until successful login takes place.
 
 # Import librabries
-import time 
+import time
 import getpass
 import paramiko
-
+from zipfile import ZipFile
+import zipfile
 # Define variables
 
 # Declare functions
@@ -97,19 +98,44 @@ def ssh_authentication():
                     output = stdout.read()
                     print(output)
                     print("Successful login using password:", password)
-                    break  # Exit loop if successful login
+                    break  
                 except paramiko.AuthenticationException:
                     print("Authentication failed using password:", password)
 
     except FileNotFoundError:
         print("File not found. Please check the filepath.")
     
+# Mode 4: Tool that allows you to brute force attack a password-locked zip file.
+def zip():
+    zip_file = input("Please provide the path to the zip file: ")
+    #wordlist = input("Enter the filepath for the password list: ")
+    #file = open(wordlist, 'r')
+    #line = file.readline()
+    #password = []
+
+    list = input("Please enter the full path of the file: ")
+    file = open(list, 'r')
+    line = file.readline()
+    wordlist = []
+
+    while line:
+        line = line.rstrip()
+        wordlist.append(line)
+        line = file.readline()
+  
+        with ZipFile(zip_file) as zf:
+            zf.extractall(pwd=bytes(wordlist, 'utf-8'))
+        
+    file.close()
+  
+# Main
 def main():
     mode = input("""Choose mode: 
     1 for Offensive, 
-    2 for Defensive 
+    2 for Defensive      
     3 to Authenticate with ssh
-    4 to exit: """)
+    4 to unzip a file
+    5 to exit: """)
     if mode == "1":
         iterator()
     elif mode == "2":
@@ -117,6 +143,8 @@ def main():
     elif mode == "3":
         ssh_authentication()
     elif mode == "4":
+        zip()
+    elif mode == "5":    
         exit
     else:
         print("Invalid slection. Try again.")
