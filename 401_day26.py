@@ -53,7 +53,7 @@ def iterator():
     # Accepts a user input string.
     # Accepts a user input word list file path.
     # Search the word list for the user input string.
-    #Print to the screen whether the string appeared in the word list.
+    # Print to the screen whether the string appeared in the word list.
 
 def finder():
     pswrd = getpass.getpass("Please enter your password: ")
@@ -127,10 +127,7 @@ def ssh_authentication():
         # Log the exception
         logging.exception(msg)
 
-    # Basic configuration of the logger
-        logging.basicConfig(filename="ssh_attempt_results.log", format='%(asctime)s %(message)s')
-
-    # Create log object
+    # Create log objects
         log1 = logging.getLogger(output1)
         log2 = logging.getLogger(output2)
 
