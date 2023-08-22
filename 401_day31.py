@@ -19,9 +19,13 @@ import subprocess
 my_os = platform.system()
 print(my_os)
 
+files_found = 0
+files_searched = 0
 
 # Define functions. Note: ChatGPT was used to help with the functions (specifically the subprocess module and "os.path.join")
 def linux_search():
+    global files_searched, files_found
+
     file = input("Please enter the name of the file you want to find: ")
     filepath = input("Please enter the full filepath to search in: ")
 
@@ -32,12 +36,16 @@ def linux_search():
         if result.stdout:
             print("File found at:")
             print(result.stdout)
+            files_found += 1
         else:
             print("File not found.")
+        files_searched += 1
     except subprocess.CalledProcessError as e:
         print("An error occurred:", e)
 
 def windows_search():
+    global files_searched, files_found
+
     file = input("Please enter the name of the file you want to find: ")
     filepath = input("Please enter the full filepath to search in: ")
 
@@ -48,8 +56,10 @@ def windows_search():
         if result.stdout:
             print("File found at:")
             print(result.stdout)
+            files_found += 1
         else:
             print("File not found.")
+        files_searched += 1
     except subprocess.CalledProcessError as e:
         print("An error occurred:", e)
 
@@ -61,6 +71,9 @@ elif my_os == "Windows":
     windows_search()
 else:
     print("Your OS is not compatible")
-      
+
+print(f"Files searched: {files_searched}")
+print(f"Files found: {files_found}")
+     
 # End
 
