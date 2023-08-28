@@ -1,5 +1,13 @@
 #!/usr/bin/python3
 
+# In Python create a script that executes from a Linux box to perform the following:
+
+    # Prompts the user to type a URL or IP address.
+    # Prompts the user to type a port number.
+    # Performs banner grabbing using netcat against the target address at the target port; prints the results to the screen then moves on to the step below.
+    # Performs banner grabbing using telnet against the target address at the target port; prints the results to the screen then moves on to the step below.
+    # Performs banner grabbing using Nmap against the target address of all well-known ports; prints the results to the screen.
+
 # Import libraries
 import os
 import socket
@@ -8,7 +16,7 @@ import socket
 
 # Define functions
 
-# netcat
+    # netcat
 def netcat_scan(addr, port):
     
     # Create a socket and a connection (INET = IPv4 / SOCK_STREAM = port)
@@ -29,7 +37,7 @@ def netcat_scan(addr, port):
     # Close the connection
     socket1.close()
 
-# telnet
+    # telnet
 def telnet_scan(addr, port):
 
     # Create a socket and a connection (INET = IPv4 / SOCK_STREAM = port)
@@ -49,15 +57,15 @@ def telnet_scan(addr, port):
     # Close the connection
     socket1.close()
 
-# nmap
+    # nmap
 def nmap_scan(addr):
 
     os.system("nmap " + addr)
-
+   
 # Main
 def main():
     print("Scannning Tool Menu: ")
-    addr = input("Enter an IP address: ")
+    addr = input("Enter a URL or IP address: ")
     mode = input("""Choose mode: 
         1 for Netcat scan, 
         2 for Telnet scan,      
