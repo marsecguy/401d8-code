@@ -30,7 +30,7 @@ if resp == '1':
     print("Open Ports: ", scanner[ip_addr]['tcp'].keys())
 elif resp == '2':
     print("Nmap Version: ", scanner.nmap_version())
-    scanner.scan(ip_addr, range, '-v -sV')
+    scanner.scan(ip_addr, range, '-v -sU')
     print(scanner.scaninfo())
     print("Ip Status: ", scanner[ip_addr].state())
     print(scanner[ip_addr].all_protocols())
