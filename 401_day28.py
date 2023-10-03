@@ -1,47 +1,59 @@
-#!/usr/bin/python3
-
-# Script Name:                  Event Logging Tool Part 2 of 3
-# Author:                       Chris Bennett
-
-# Purpose
-# In Python, create a script that prompts the user to select one of the following modes:
-
-# Mode 1: Offensive; Dictionary Iterator
-    # Accepts a user input word list file path and iterates through the word list, assigning the word being read to a variable.
-    # Add a delay between words.
-    # Print to the screen the value of the variable.
-
-# Mode 2: Defensive; Password Recognized
-    # Accepts a user input string.
-    # Accepts a user input word list file path
-
-    # Search the word list for the user input string.
-    # Print to the screen whether the string appeared in the word list.
-
-# Mode 3: Authenticate to an SSH server by its IP address.
-    #Assume the username and IP are known inputs and attempt each word on the provided word list until successful login takes place.
-
-# Mode 4: Tool that allows you to brute force attack a password-locked zip file.
-
-# Add to mode 3 a logging feature that creates a log file in the local directory and logs errors. 
-
-# Import libraries
+#!/usr/bin/env python3
 import os
 import urllib.request
 import ctypes
 from cryptography.fernet import Fernet
 from tkinter import messagebox
 import logging
+from logging import StreamHandler
 from logging.handlers import RotatingFileHandler
 
-# Set up Logging
+# Script Name:                  Event Logging Tool Part 3 of 3
+# Author:                       Chris Bennett 
+# Purpose:                      In your Python tool:
+#                               
+#                               Use StreamHandler and FileHandler in your Python script.
+#                               FileHandler should write to a local file.
+#                               StreamHandler should output to the terminal.
+#                               
+
+
+# Set up Logging with StreamHandler and RotatingFileHandler
 file_log = 'app_log.log'
-# Where log messages should be written, log level, and formatted
 logging.basicConfig(filename=file_log, level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-#log size in bytes
+# Log size in bytes
 max_size_log = 10 * 1024 * 1024
 log_files_count = 3
+
+# Create logger object
+logger = logging.getLogger('my_logger')
+
+# Create handlers (stream/file)
+terminal_handler = StreamHandler()  # StreamHandler for terminal output
+file_handler = RotatingFileHandler('errors.log', maxBytes=max_size_log, backupCount=log_files_count)
+
+# Set levels for handlers
+terminal_handler.setLevel(logging.CRITICAL)
+file_handler.setLevel(logging.ERROR)
+
+# Create formater for log mesages
+terminal_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+file_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Pair up new formaters w/handlers
+terminal_handler.setFormatter(terminal_format)
+file_handler.setFormatter(file_format)
+
+# Add handlers to logger
+logger.addHandler(terminal_handler)
+logger.addHandler(file_handler)
+
+logger.critical("This is a critical message")
+logger.warning("This is a warning message")
+logger.error("This is an error message")
+
+
 
 # Declaration of functions
 # Developed with class review assistance
@@ -89,6 +101,7 @@ def decrypt_message(key, encrypted_message):
     #print decrypted message as a string
     print("Decrypted message:", decrypted_message.decode())
 
+
 # Recursive folder and contents and key to encrypt
 def encrypt_folder(key, input_folder, output_folder):
     for dirpath, dirnames, filenames in os.walk(input_folder):
@@ -105,6 +118,7 @@ def decrypt_folder(key, input_folder, output_folder):
             relative_path = os.path.relpath(input_file, input_folder)
             output_file = os.path.join(output_folder, relative_path)
             decrypt_file(key, input_file, output_file)
+
 
 # Alter desktop wallpaper with ransomware image
 def desktop_wallpaper(image_ransom, message_ransom):
@@ -201,4 +215,4 @@ if __name__ == "__main__":
 # End
 
 # Resources
-#           Python: How to Create Rotating Logs - https://www.blog.pythonlibrary.org/2014/02/11/python-how-to-create-rotating-logs/
+#               Python Logging: Using Handlers - https://realpython.com/python-logging/#using-handlers
